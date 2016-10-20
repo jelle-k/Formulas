@@ -1,5 +1,5 @@
 /**
-AR Invoice
+AR Invoice update
 **/
 
 SELECT
