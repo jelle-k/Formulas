@@ -1,0 +1,1 @@
+IF DatePart ( "ww",{FCT1.Date}) = 53 then 1 else DatePart ( "ww",{FCT1.Date})

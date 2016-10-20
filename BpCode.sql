@@ -1,0 +1,1 @@
+LEFT({OFCT.Code},6)
