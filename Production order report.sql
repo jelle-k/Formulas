@@ -1,54 +1,61 @@
 SELECT 
-T0."BaseRef", 
-T0."ItemCode",
-T0."StockPrice" * T0."Quantity" "total" 
+  T0."BaseRef", 
+  T0."ItemCode",
+  T0."StockPrice" * T0."Quantity" "total" 
 
-FROM IGE1 T0 
-WHERE T0."BaseRef" = 2443 AND
-LEFT(T0."ItemCode",2) <> 99 
+FROM 
+  IGE1 T0 
+WHERE 
+  T0."BaseRef" = 2443 AND
+  LEFT(T0."ItemCode",2) <> 99 
 
 
 
 ----------------------------------------------------------------
 
 SELECT 
-T0."BaseRef", 
-sum(T0."StockPrice" * T0."Quantity") "total" --€(231.87 + 656.04) + 1978.97
+  T0."BaseRef", 
+  SUM(T0."StockPrice" * T0."Quantity") "total" --€(231.87 + 656.04) + 1978.97
 --T0."ItemCode",
 --T0."Price",
 --T0."Quantity"
 
-FROM IGE1 T0 
-WHERE T0."BaseRef" = 2443
+FROM 
+  IGE1 T0 
+WHERE 
+  T0."BaseRef" = 2443
 
 
-GROUP BY T0."BaseRef"
+GROUP BY 
+  T0."BaseRef"
 
 ----------------------------------------------------------------------
 
 SELECT
-T0."BaseRef", 
-sum(T0."StockPrice" * T0."Quantity") "total €", --€(231.87 + 656.04) + 1978.97
---T0."ItemCode",
---T0."Price",
---T0."Quantity"
-T1."ItemCode"
---T1."PlannedQty",
---T1."CmpltQty",
---T1."DueDate",
---((T0."StockPrice" * T0."Quantity") / T1."CmpltQty") "cost per Piece"
+  T0."BaseRef", 
+  SUM(T0."StockPrice" * T0."Quantity") "total €", --€(231.87 + 656.04) + 1978.97
+  --T0."ItemCode",
+  --T0."Price",
+  --T0."Quantity"
+  T1."ItemCode"
+  --T1."PlannedQty",
+  --T1."CmpltQty",
+  --T1."DueDate",
+  --((T0."StockPrice" * T0."Quantity") / T1."CmpltQty") "cost per Piece"
 
+FROM
+  IGE1 T0
+  LEFT OUTER JOIN OWOR T1 ON T0."BaseRef" = T1."DocNum" 
+WHERE 
+  T0."BaseRef" = 2443
 
-FROM IGE1 T0
-LEFT OUTER JOIN OWOR T1 ON T0."BaseRef" = T1."DocNum" 
-WHERE T0."BaseRef" = 2443
-
-GROUP BY T0."BaseRef", 
---T1."ItemCode", 
---T1."PlannedQty", 
---T1."CmpltQty", 
---T1."DueDate", 
---((T0."StockPrice" * T0."Quantity") / T1."CmpltQty") 
+GROUP BY 
+  T0."BaseRef", 
+  --T1."ItemCode", 
+  --T1."PlannedQty", 
+  --T1."CmpltQty", 
+  --T1."DueDate", 
+  --((T0."StockPrice" * T0."Quantity") / T1."CmpltQty") 
 
 
 
