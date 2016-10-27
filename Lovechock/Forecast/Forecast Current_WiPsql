@@ -1,0 +1,413 @@
+/*
+Contanins 3 Unions to add AP Invoice + Sales Order - AR Credit Note.
+
+**********************
+*** AR Credit Note ***
+**** ObjType = 14 ****
+**********************
+*/
+SELECT
+T0."ObjType",
+CAST(T0."CardCode" AS INT) "CardCode",    -- BP code is CAST as a Number.
+T2."CardName" AS "Customer Name",
+T2."Country",
+T0."DocNum" AS "Document Number",
+T0."DocDate" AS "Posting/Delivery Date",
+(CASE                                     -- Item Code is CAST as Number.
+  WHEN T3."ItemCode" = '11001' 
+  THEN 13001
+  WHEN T3."ItemCode" = '11101' 
+  THEN 13101
+  WHEN T3."ItemCode" = '11201' 
+  THEN 13201
+  WHEN T3."ItemCode" = '11301' 
+  THEN 13301
+  WHEN T3."ItemCode" = '11401' 
+  THEN 13401
+  WHEN T3."ItemCode" = '11501' 
+  THEN 13501
+  WHEN T3."ItemCode" = '11601' 
+  THEN 13601
+  WHEN T3."ItemCode" = '11002' 
+  THEN 13002
+  WHEN T3."ItemCode" = '11102' 
+  THEN 13102
+  WHEN T3."ItemCode" = '11202' 
+  THEN 13202
+  WHEN T3."ItemCode" = '11302' 
+  THEN 13302
+  WHEN T3."ItemCode" = '11402' 
+  THEN 13402
+  WHEN T3."ItemCode" = '11502' 
+  THEN 13502
+  WHEN T3."ItemCode" = '11602' 
+  THEN 13602
+  WHEN T3."ItemCode" = '11003' 
+  THEN 13003
+  WHEN T3."ItemCode" = '11103' 
+  THEN 13103
+  WHEN T3."ItemCode" = '11203' 
+  THEN 13203
+  WHEN T3."ItemCode" = '11303' 
+  THEN 13303
+  WHEN T3."ItemCode" = '11403' 
+  THEN 13403
+  WHEN T3."ItemCode" = '11503' 
+  THEN 13503
+  WHEN T3."ItemCode" = '11603' 
+  THEN 13603
+  WHEN T3."ItemCode" = '11004' 
+  THEN 13004
+  WHEN T3."ItemCode" = '11104' 
+  THEN 13104
+  WHEN T3."ItemCode" = '11204' 
+  THEN 13204
+  WHEN T3."ItemCode" = '11304' 
+  THEN 13304
+  WHEN T3."ItemCode" = '11404' 
+  THEN 13404
+  WHEN T3."ItemCode" = '11504' 
+  THEN 13504
+  WHEN T3."ItemCode" = '11604' 
+  THEN 13604
+  WHEN T3."ItemCode" = '11005' 
+  THEN 13005
+  WHEN T3."ItemCode" = '11105' 
+  THEN 13105
+  WHEN T3."ItemCode" = '11205' 
+  THEN 13205
+  WHEN T3."ItemCode" = '11305' 
+  THEN 13305
+  WHEN T3."ItemCode" = '11405' 
+  THEN 13405
+  WHEN T3."ItemCode" = '11505' 
+  THEN 13505
+  WHEN T3."ItemCode" = '11605' 
+  THEN 13605
+  WHEN T3."ItemCode" = '11006' 
+  THEN 13006
+  WHEN T3."ItemCode" = '11106' 
+  THEN 13106
+  WHEN T3."ItemCode" = '11206' 
+  THEN 13206
+  WHEN T3."ItemCode" = '11306' 
+  THEN 13306
+  WHEN T3."ItemCode" = '11406' 
+  THEN 13406
+  WHEN T3."ItemCode" = '11506' 
+  THEN 13506
+  WHEN T3."ItemCode" = '11606' 
+  THEN 13606
+  WHEN T3."ItemCode" = '11007' 
+  THEN 13007
+  WHEN T3."ItemCode" = '11107' 
+  THEN 13107
+  WHEN T3."ItemCode" = '11207' 
+  THEN 13207
+  WHEN T3."ItemCode" = '11307' 
+  THEN 13307
+  WHEN T3."ItemCode" = '11407' 
+  THEN 13407
+  WHEN T3."ItemCode" = '11507' 
+  THEN 13507
+  WHEN T3."ItemCode" = '11607' 
+  THEN 13607
+  ELSE CAST(T3."ItemCode" AS INT)
+END) AS "Item No.",
+T3."ItemName" AS "Item Name",
+(Case                                     -- Convert 21x Displays to 12x Displays.
+  WHEN LEFT(T1."ItemCode",2) = 11
+  THEN (((T1."Quantity" * 21) / 12) * -1)
+  ELSE T1."Quantity" * -1
+END)  AS "Q Pck", 
+T2."U_forecast_resp"
+
+
+FROM ORIN T0
+INNER JOIN RIN1 T1 ON T0."DocEntry" = T1."DocEntry"
+INNER JOIN OCRD T2 ON T0."CardCode" = T2."CardCode"
+LEFT OUTER JOIN OITM T3 ON T1."ItemCode" = T3."ItemCode"
+
+WHERE
+T2."U_forecast_resp" = 2 AND              -- Forecast Responseable
+T0."DocType" = 'I' AND                    -- Document type is Item
+LEFT(T1."ItemCode",2) NOT IN ('99', '60') -- Item Code does notstart with 99 or 66
+
+
+UNION
+
+/*
+******************
+*** AR Invoice ***
+******************
+** ObjType = 13 **
+******************
+*/
+SELECT
+T0."ObjType",
+CAST(T0."CardCode" AS INT) "CardCode", 
+T2."CardName" AS "Customer Name",
+T2."Country",
+T0."DocNum" AS "Document Number",
+T0."DocDate" AS "Posting/Delivery Date",
+(CASE 
+  WHEN T3."ItemCode" = '11001' 
+  THEN 13001
+  WHEN T3."ItemCode" = '11101' 
+  THEN 13101
+  WHEN T3."ItemCode" = '11201' 
+  THEN 13201
+  WHEN T3."ItemCode" = '11301' 
+  THEN 13301
+  WHEN T3."ItemCode" = '11401' 
+  THEN 13401
+  WHEN T3."ItemCode" = '11501' 
+  THEN 13501
+  WHEN T3."ItemCode" = '11601' 
+  THEN 13601
+  WHEN T3."ItemCode" = '11002' 
+  THEN 13002
+  WHEN T3."ItemCode" = '11102' 
+  THEN 13102
+  WHEN T3."ItemCode" = '11202' 
+  THEN 13202
+  WHEN T3."ItemCode" = '11302' 
+  THEN 13302
+  WHEN T3."ItemCode" = '11402' 
+  THEN 13402
+  WHEN T3."ItemCode" = '11502' 
+  THEN 13502
+  WHEN T3."ItemCode" = '11602' 
+  THEN 13602
+  WHEN T3."ItemCode" = '11003' 
+  THEN 13003
+  WHEN T3."ItemCode" = '11103' 
+  THEN 13103
+  WHEN T3."ItemCode" = '11203' 
+  THEN 13203
+  WHEN T3."ItemCode" = '11303' 
+  THEN 13303
+  WHEN T3."ItemCode" = '11403' 
+  THEN 13403
+  WHEN T3."ItemCode" = '11503' 
+  THEN 13503
+  WHEN T3."ItemCode" = '11603' 
+  THEN 13603
+  WHEN T3."ItemCode" = '11004' 
+  THEN 13004
+  WHEN T3."ItemCode" = '11104' 
+  THEN 13104
+  WHEN T3."ItemCode" = '11204' 
+  THEN 13204
+  WHEN T3."ItemCode" = '11304' 
+  THEN 13304
+  WHEN T3."ItemCode" = '11404' 
+  THEN 13404
+  WHEN T3."ItemCode" = '11504' 
+  THEN 13504
+  WHEN T3."ItemCode" = '11604' 
+  THEN 13604
+  WHEN T3."ItemCode" = '11005' 
+  THEN 13005
+  WHEN T3."ItemCode" = '11105' 
+  THEN 13105
+  WHEN T3."ItemCode" = '11205' 
+  THEN 13205
+  WHEN T3."ItemCode" = '11305' 
+  THEN 13305
+  WHEN T3."ItemCode" = '11405' 
+  THEN 13405
+  WHEN T3."ItemCode" = '11505' 
+  THEN 13505
+  WHEN T3."ItemCode" = '11605' 
+  THEN 13605
+  WHEN T3."ItemCode" = '11006' 
+  THEN 13006
+  WHEN T3."ItemCode" = '11106' 
+  THEN 13106
+  WHEN T3."ItemCode" = '11206' 
+  THEN 13206
+  WHEN T3."ItemCode" = '11306' 
+  THEN 13306
+  WHEN T3."ItemCode" = '11406' 
+  THEN 13406
+  WHEN T3."ItemCode" = '11506' 
+  THEN 13506
+  WHEN T3."ItemCode" = '11606' 
+  THEN 13606
+  WHEN T3."ItemCode" = '11007' 
+  THEN 13007
+  WHEN T3."ItemCode" = '11107' 
+  THEN 13107
+  WHEN T3."ItemCode" = '11207' 
+  THEN 13207
+  WHEN T3."ItemCode" = '11307' 
+  THEN 13307
+  WHEN T3."ItemCode" = '11407' 
+  THEN 13407
+  WHEN T3."ItemCode" = '11507' 
+  THEN 13507
+  WHEN T3."ItemCode" = '11607' 
+  THEN 13607
+  ELSE CAST(T3."ItemCode" AS INT)
+END) AS "Item No.",
+T3."ItemName" AS "Item Name",
+(Case
+  WHEN LEFT(T1."ItemCode",2) = 11
+  THEN ((T1."Quantity" * 21) / 12)
+  ELSE T1."Quantity"
+END)  AS "Q Pck",
+T2."U_forecast_resp"
+
+
+FROM OINV T0
+INNER JOIN INV1 T1 ON T0."DocEntry" = T1."DocEntry"
+INNER JOIN OCRD T2 ON T0."CardCode" = T2."CardCode"
+LEFT OUTER JOIN OITM T3 ON T1."ItemCode" = T3."ItemCode"
+
+WHERE
+T2."U_forecast_resp" = 2 AND
+T0."DocType" = 'I' AND
+LEFT(T1."ItemCode",2) NOT IN ('99', '60') 
+
+
+UNION
+
+/*
+******************
+** Sales Order ***
+******************
+** ObjType = 17 **
+******************
+*/
+SELECT
+T0."ObjType",
+CAST(T0."CardCode" AS INT) "CardCode", 
+T2."CardName" AS "Customer Name",
+T2."Country",
+T0."DocNum" AS "Document Number",
+T0."DocDueDate" AS "Posting/Delivery Date",
+(CASE 
+  WHEN T3."ItemCode" = '11001' 
+  THEN 13001
+  WHEN T3."ItemCode" = '11101' 
+  THEN 13101
+  WHEN T3."ItemCode" = '11201' 
+  THEN 13201
+  WHEN T3."ItemCode" = '11301' 
+  THEN 13301
+  WHEN T3."ItemCode" = '11401' 
+  THEN 13401
+  WHEN T3."ItemCode" = '11501' 
+  THEN 13501
+  WHEN T3."ItemCode" = '11601' 
+  THEN 13601
+  WHEN T3."ItemCode" = '11002' 
+  THEN 13002
+  WHEN T3."ItemCode" = '11102' 
+  THEN 13102
+  WHEN T3."ItemCode" = '11202' 
+  THEN 13202
+  WHEN T3."ItemCode" = '11302' 
+  THEN 13302
+  WHEN T3."ItemCode" = '11402' 
+  THEN 13402
+  WHEN T3."ItemCode" = '11502' 
+  THEN 13502
+  WHEN T3."ItemCode" = '11602' 
+  THEN 13602
+  WHEN T3."ItemCode" = '11003' 
+  THEN 13003
+  WHEN T3."ItemCode" = '11103' 
+  THEN 13103
+  WHEN T3."ItemCode" = '11203' 
+  THEN 13203
+  WHEN T3."ItemCode" = '11303' 
+  THEN 13303
+  WHEN T3."ItemCode" = '11403' 
+  THEN 13403
+  WHEN T3."ItemCode" = '11503' 
+  THEN 13503
+  WHEN T3."ItemCode" = '11603' 
+  THEN 13603
+  WHEN T3."ItemCode" = '11004' 
+  THEN 13004
+  WHEN T3."ItemCode" = '11104' 
+  THEN 13104
+  WHEN T3."ItemCode" = '11204' 
+  THEN 13204
+  WHEN T3."ItemCode" = '11304' 
+  THEN 13304
+  WHEN T3."ItemCode" = '11404' 
+  THEN 13404
+  WHEN T3."ItemCode" = '11504' 
+  THEN 13504
+  WHEN T3."ItemCode" = '11604' 
+  THEN 13604
+  WHEN T3."ItemCode" = '11005' 
+  THEN 13005
+  WHEN T3."ItemCode" = '11105' 
+  THEN 13105
+  WHEN T3."ItemCode" = '11205' 
+  THEN 13205
+  WHEN T3."ItemCode" = '11305' 
+  THEN 13305
+  WHEN T3."ItemCode" = '11405' 
+  THEN 13405
+  WHEN T3."ItemCode" = '11505' 
+  THEN 13505
+  WHEN T3."ItemCode" = '11605' 
+  THEN 13605
+  WHEN T3."ItemCode" = '11006' 
+  THEN 13006
+  WHEN T3."ItemCode" = '11106' 
+  THEN 13106
+  WHEN T3."ItemCode" = '11206' 
+  THEN 13206
+  WHEN T3."ItemCode" = '11306' 
+  THEN 13306
+  WHEN T3."ItemCode" = '11406' 
+  THEN 13406
+  WHEN T3."ItemCode" = '11506' 
+  THEN 13506
+  WHEN T3."ItemCode" = '11606' 
+  THEN 13606
+  WHEN T3."ItemCode" = '11007' 
+  THEN 13007
+  WHEN T3."ItemCode" = '11107' 
+  THEN 13107
+  WHEN T3."ItemCode" = '11207' 
+  THEN 13207
+  WHEN T3."ItemCode" = '11307' 
+  THEN 13307
+  WHEN T3."ItemCode" = '11407' 
+  THEN 13407
+  WHEN T3."ItemCode" = '11507' 
+  THEN 13507
+  WHEN T3."ItemCode" = '11607' 
+  THEN 13607
+  ELSE CAST(T3."ItemCode" AS INT)
+END) AS "Item No.",
+T3."ItemName" AS "Item Name",
+(Case
+  WHEN LEFT(T1."ItemCode",2) = 11
+  THEN ((T1."Quantity" * 21) / 12)
+  ELSE T1."Quantity"
+END)  AS "Q Pck",
+T2."U_forecast_resp"
+
+
+
+FROM ORDR T0
+INNER JOIN RDR1 T1 ON T0."DocEntry" = T1."DocEntry"
+INNER JOIN OCRD T2 ON T0."CardCode" = T2."CardCode"
+LEFT OUTER JOIN OITM T3 ON T1."ItemCode" = T3."ItemCode"
+
+WHERE
+T2."U_forecast_resp" = 2 AND
+T0."DocStatus" = 'O' AND
+T0."DocType" = 'I' AND
+LEFT(T1."ItemCode",2) NOT IN ('99', '60')
+
+
+
