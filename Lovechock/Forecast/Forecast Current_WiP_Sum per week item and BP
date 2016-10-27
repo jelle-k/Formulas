@@ -1,6 +1,10 @@
 /*
 Contanins 3 Unions to add AP Invoice + Sales Order - AR Credit Note.
 
+Create SUM for Quantity per week(Datpart) 
+  Per Customer
+  Per Item
+
 **********************
 *** AR Credit Note ***
 **** ObjType = 14 ****
@@ -11,8 +15,8 @@ T0."ObjType",
 CAST(T0."CardCode" AS INT) "CardCode",    -- BP code is CAST as a Number.
 T2."CardName" AS "Customer Name",
 T2."Country",
-T0."DocNum" AS "Document Number",
-T0."DocDate" AS "Posting/Delivery Date",
+WEEK(T0."DocDate") AS "Posting/Delivery Week",
+YEAR(T0."DocDate") "Year",
 (CASE                                     -- Item Code is CAST as Number.
   WHEN T3."ItemCode" = '11001' 
   THEN 13001
@@ -115,12 +119,12 @@ T0."DocDate" AS "Posting/Delivery Date",
   ELSE CAST(T3."ItemCode" AS INT)
 END) AS "Item No.",
 T3."ItemName" AS "Item Name",
-(Case                                     -- Convert 21x Displays to 12x Displays.
+SUM((Case                                     -- Convert 21x Displays to 12x Displays.
   WHEN LEFT(T1."ItemCode",2) = 11
   THEN (((T1."Quantity" * 21) / 12) * -1)
   ELSE T1."Quantity" * -1
-END)  AS "Q Pck", 
-T2."U_forecast_resp"
+END))  AS "Q Pck",
+T1."LineStatus"
 
 
 FROM ORIN T0
@@ -129,9 +133,12 @@ INNER JOIN OCRD T2 ON T0."CardCode" = T2."CardCode"
 LEFT OUTER JOIN OITM T3 ON T1."ItemCode" = T3."ItemCode"
 
 WHERE
-T2."U_forecast_resp" = {?ForecastResp} AND-- Forecast Responseable
+T2."U_forecast_resp" = 2 AND-- Forecast Responseable
 T0."DocType" = 'I' AND                    -- Document type is Item
 LEFT(T1."ItemCode",2) NOT IN ('99', '60') -- Item Code does notstart with 99 or 66
+
+GROUP BY
+  T0."ObjType", T0."CardCode", T2."CardName", T2."Country", WEEK(T0."DocDate"), YEAR(T0."DocDate"), T3."ItemCode", T3."ItemName", YEAR(T0."DocDate"), T1."LineStatus"
 
 
 UNION
@@ -148,8 +155,8 @@ T0."ObjType",
 CAST(T0."CardCode" AS INT) "CardCode", 
 T2."CardName" AS "Customer Name",
 T2."Country",
-T0."DocNum" AS "Document Number",
-T0."DocDate" AS "Posting/Delivery Date",
+WEEK(T0."DocDate") AS "Posting/Delivery Week",
+YEAR(T0."DocDate") "Year",
 (CASE 
   WHEN T3."ItemCode" = '11001' 
   THEN 13001
@@ -252,13 +259,12 @@ T0."DocDate" AS "Posting/Delivery Date",
   ELSE CAST(T3."ItemCode" AS INT)
 END) AS "Item No.",
 T3."ItemName" AS "Item Name",
-(Case
+SUM((Case
   WHEN LEFT(T1."ItemCode",2) = 11
   THEN ((T1."Quantity" * 21) / 12)
   ELSE T1."Quantity"
-END)  AS "Q Pck",
-T2."U_forecast_resp"
-
+END))  AS "Q Pck",
+T1."LineStatus"
 
 FROM OINV T0
 INNER JOIN INV1 T1 ON T0."DocEntry" = T1."DocEntry"
@@ -266,9 +272,13 @@ INNER JOIN OCRD T2 ON T0."CardCode" = T2."CardCode"
 LEFT OUTER JOIN OITM T3 ON T1."ItemCode" = T3."ItemCode"
 
 WHERE
-T2."U_forecast_resp" = {?ForecastResp} AND
-T0."DocType" = 'I' AND
-LEFT(T1."ItemCode",2) NOT IN ('99', '60') 
+T2."U_forecast_resp" = 2 AND-- Forecast Responseable
+T0."DocType" = 'I' AND                    -- Document type is Item
+LEFT(T1."ItemCode",2) NOT IN ('99', '60') -- Item Code does notstart with 99 or 66
+
+GROUP BY
+  T0."ObjType", T0."CardCode", T2."CardName", T2."Country", WEEK(T0."DocDate"), YEAR(T0."DocDate"), T3."ItemCode", T3."ItemName", T1."LineStatus"
+
 
 
 UNION
@@ -285,8 +295,8 @@ T0."ObjType",
 CAST(T0."CardCode" AS INT) "CardCode", 
 T2."CardName" AS "Customer Name",
 T2."Country",
-T0."DocNum" AS "Document Number",
-T0."DocDueDate" AS "Posting/Delivery Date",
+WEEK(T0."DocDueDate") AS "Posting/Delivery Week",
+YEAR(T0."DocDueDate") "Year",
 (CASE 
   WHEN T3."ItemCode" = '11001' 
   THEN 13001
@@ -389,14 +399,12 @@ T0."DocDueDate" AS "Posting/Delivery Date",
   ELSE CAST(T3."ItemCode" AS INT)
 END) AS "Item No.",
 T3."ItemName" AS "Item Name",
-(Case
+SUM((Case
   WHEN LEFT(T1."ItemCode",2) = 11
   THEN ((T1."Quantity" * 21) / 12)
   ELSE T1."Quantity"
-END)  AS "Q Pck",
-T2."U_forecast_resp"
-
-
+END))  AS "Q Pck",
+T1."LineStatus"
 
 FROM ORDR T0
 INNER JOIN RDR1 T1 ON T0."DocEntry" = T1."DocEntry"
@@ -404,10 +412,13 @@ INNER JOIN OCRD T2 ON T0."CardCode" = T2."CardCode"
 LEFT OUTER JOIN OITM T3 ON T1."ItemCode" = T3."ItemCode"
 
 WHERE
-T2."U_forecast_resp" = {?ForecastResp} AND
-T0."DocStatus" = 'O' AND
-T0."DocType" = 'I' AND
-LEFT(T1."ItemCode",2) NOT IN ('99', '60')
+T1."LineStatus" = 'O' AND
+T2."U_forecast_resp" = 2 AND-- Forecast Responseable
+T0."DocType" = 'I' AND                    -- Document type is Item
+LEFT(T1."ItemCode",2) NOT IN ('99', '60') -- Item Code does notstart with 99 or 66
+
+GROUP BY
+  T0."ObjType", T0."CardCode", T2."CardName", T2."Country", WEEK(T0."DocDueDate"), YEAR(T0."DocDueDate"), T3."ItemCode", T3."ItemName", T1."LineStatus"
 
 
 

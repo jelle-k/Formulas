@@ -493,7 +493,7 @@ FROM ORDR T0
 	LEFT OUTER JOIN OITM T3 ON T1."ItemCode" = T3."ItemCode"
 
 WHERE
-	T0."DocStatus" = 'O' AND
+	T1."LineStatus" = 'O' AND
 	T0."DocType" = 'I' AND
 	LEFT(T1."ItemCode",2) NOT IN ('99') AND
 	MONTH(T0."DocDueDate") = MONTH(CURRENT_DATE) AND YEAR(T0."DocDueDate") = YEAR(CURRENT_DATE)
