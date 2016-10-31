@@ -1,0 +1,18 @@
+Start by Requesting
+* Local account
+* Remote Account
+  - Shared folder authorization
+* Outlook authorization
+
+On Local
+* Create new User Local
+* Add MS office to Desktop
+  - Pin to Task-Bar
+* Add Remote Desktop 
+  - 185.3.107:12389
+* Restart Pc
+
+Remote
+* Create SAP Business One
+  - Give Licence + add-ons
+  - Apply Authorizations
