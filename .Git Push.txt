@@ -1,3 +1,6 @@
+cd '/media/sf_SQL.PHP/Formulas' 
+
+
 git add --all
 
 
