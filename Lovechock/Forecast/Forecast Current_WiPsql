@@ -129,7 +129,7 @@ INNER JOIN OCRD T2 ON T0."CardCode" = T2."CardCode"
 LEFT OUTER JOIN OITM T3 ON T1."ItemCode" = T3."ItemCode"
 
 WHERE
-T2."U_forecast_resp" = {?ForecastResp} AND-- Forecast Responseable
+T2."U_forecast_resp" = [%0] AND-- Forecast Responseable
 T0."DocType" = 'I' AND                    -- Document type is Item
 LEFT(T1."ItemCode",2) NOT IN ('99', '60') -- Item Code does notstart with 99 or 66
 
@@ -266,7 +266,7 @@ INNER JOIN OCRD T2 ON T0."CardCode" = T2."CardCode"
 LEFT OUTER JOIN OITM T3 ON T1."ItemCode" = T3."ItemCode"
 
 WHERE
-T2."U_forecast_resp" = {?ForecastResp} AND
+T2."U_forecast_resp" = [%0] AND
 T0."DocType" = 'I' AND
 LEFT(T1."ItemCode",2) NOT IN ('99', '60') 
 
@@ -404,7 +404,7 @@ INNER JOIN OCRD T2 ON T0."CardCode" = T2."CardCode"
 LEFT OUTER JOIN OITM T3 ON T1."ItemCode" = T3."ItemCode"
 
 WHERE
-T2."U_forecast_resp" = {?ForecastResp} AND
+T2."U_forecast_resp" = [%0] AND
 T0."DocStatus" = 'O' AND
 T0."DocType" = 'I' AND
 LEFT(T1."ItemCode",2) NOT IN ('99', '60')

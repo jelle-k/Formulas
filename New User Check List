@@ -16,3 +16,15 @@ Remote
 * Create SAP Business One
   - Give Licence + add-ons
   - Apply Authorizations
+
+SAP
+* Create Employee Master Data
+* Create Users - Setup
+* Apply Licence
+* Apply authoriszation
+* Apply Addon Licence
+* Copy form settings
+* set Approver
+* Login
+  - Create dashboard
+  - Remove/hide both notifications
