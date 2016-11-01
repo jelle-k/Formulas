@@ -4,7 +4,7 @@ cd '/media/sf_SQL.PHP/Formulas'
 git add --all
 
 
-git commit -m "Add message"
+git commit -m "."
 
 
 git push
