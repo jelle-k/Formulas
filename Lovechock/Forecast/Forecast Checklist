@@ -1,0 +1,6 @@
+[] Create new export per region with, 1-Access_Forcast_WiPv2_NoWeekNrReset.rpt
+[] Check if Last Year, Ordered and Actual are the same
+
+[] Create pivot table per Regeon. Based on 1.NLBE.xls
+[] Copy Sheet two for group type
+[] Check if Sum of Items per year ar same as planned
