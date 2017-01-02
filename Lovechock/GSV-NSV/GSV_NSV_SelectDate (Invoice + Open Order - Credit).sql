@@ -145,8 +145,16 @@ SELECT
 		THEN 8	
     END) AS "PC/Pck",
 	(T1."Quantity"*T1."PriceBefDi") AS "GSV",
-	((T1."Quantity"*T1."PriceBefDi")-T1."LineTotal") "Discount",
-	T1."LineTotal" AS "NSV",
+	((T1."Quantity"*T1."PriceBefDi")-(CASE
+		WHEN T0."DiscPrcnt" != 0
+		THEN T1."LineTotal" / (1 + (T0."DiscPrcnt"  / 100))
+		ELSE T1."LineTotal"
+	END)) "Discount",
+	(CASE
+		WHEN T0."DiscPrcnt" != 0
+		THEN T1."LineTotal" / (1 + (T0."DiscPrcnt"  / 100))
+		ELSE T1."LineTotal"
+	END) AS "NSV",
 	(Case
 		WHEN LEFT(T1."ItemCode",2) = 11
 		THEN (21 * T1."Quantity")
@@ -324,8 +332,16 @@ SELECT
 		THEN 8	
   END) AS "PC/Pck",
 	(T1."Quantity"*T1."PriceBefDi")  * -1 AS "GSV",
-	((T1."Quantity"*T1."PriceBefDi")-T1."LineTotal") * -1 "Discount",
-	T1."LineTotal"  * -1 "NSV",
+	((T1."Quantity"*T1."PriceBefDi")-(CASE
+		WHEN T0."DiscPrcnt" != 0
+		THEN (T1."LineTotal" / (1 + (T0."DiscPrcnt"  / 100))) * -1
+		ELSE T1."LineTotal" * -1
+	END)) "Discount",
+	(CASE
+		WHEN T0."DiscPrcnt" != 0
+		THEN (T1."LineTotal" / (1 + (T0."DiscPrcnt"  / 100))) * -1
+		ELSE T1."LineTotal" * -1
+	END) AS "NSV",
 	(CASE
 		WHEN LEFT(T1."ItemCode",2) = 11
 		THEN (21 * T1."Quantity") * -1
@@ -500,8 +516,16 @@ SELECT
 		THEN 8	
  	END) AS "PC/Pck",
 	(T1."Quantity"*T1."PriceBefDi") AS "GSV",
-	((T1."Quantity"*T1."PriceBefDi")-T1."LineTotal") "Discount",
-	T1."LineTotal" AS "NSV",
+	((T1."Quantity"*T1."PriceBefDi")-(CASE
+		WHEN T0."DiscPrcnt" != 0
+		THEN T1."LineTotal" / (1 + (T0."DiscPrcnt"  / 100))
+		ELSE T1."LineTotal"
+	END)) "Discount",
+	(CASE
+		WHEN T0."DiscPrcnt" != 0
+		THEN T1."LineTotal" / (1 + (T0."DiscPrcnt"  / 100))
+		ELSE T1."LineTotal"
+	END) AS "NSV",
 	(Case
 		WHEN LEFT(T1."ItemCode",2) = 11
 		THEN (21 * T1."Quantity")

@@ -43,7 +43,11 @@ T0."DocNum" AS "Document Number",
 T1."ItemCode" AS "Item No.",
 (T1."Quantity"*T1."PriceBefDi") AS "GSV",
 ((T1."Quantity"*T1."PriceBefDi")-T1."LineTotal") "Discount",
-T1."LineTotal" AS "NSV"
+(CASE
+		WHEN T0."DiscPrcnt" != 0
+		THEN T1."LineTotal" / (1 + (T0."DiscPrcnt"  / 100))
+		ELSE T1."LineTotal"
+	END) AS "NSV"
 
 
 FROM OINV T0
